@@ -1,0 +1,3 @@
+1.OrbitalControls 'THREE.Spherical is not a constructor' Error
+Answer£ºYou need to make sure the source code of OrbitControls.js is from the same release as the three.js library. Update both to the current version.
+ 

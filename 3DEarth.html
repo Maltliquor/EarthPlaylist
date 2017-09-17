@@ -1,49 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Big Big World</title>
-    <script src='js/three.min.js'></script>
+    <title>Big Big World</title>
+    <style>canvas { width: 100%; height: 100% }</style>
+    <script src="js/three.min.js"></script>
+	<script src="js/controls/OrbitControls.js"></script>
 </head>
-<style>
-body {
-    margin: 0px;
-    background-color: #000000;
-    overflow: hidden;
-}
-</style>
 <body>
-	
-</body>
-<script>
-	
-			//Three.js定义的“场景”对象
-		var scene = new THREE.Scene();
-		var camera = new THREE.PerspectiveCamera(75, 500 / 500, 0.1, 1000);
-		//进行WebGL兼容性判断
-		/*
-		if(webglAvailable()){
-			var renderer=new THREE.WebGLRenderer();
-		}else{
-			var renderer=new THREE.CanvasRenderer();//对于环境支持html5但不支持webgl的情况，可以尝试使用更慢一些的2Dcanvas来软件绘图，但效果差强人意
-		}
-		*/
-		var renderer = new THREE.WebGLRenderer();
-		renderer.setSize(window.offsetWidth, window.offsetWidth);//render可以看成是对canvas的一种扩展
-		document.body.appendChild(renderer.domElement);
+    <script>
+        var scene = new THREE.Scene();       
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);        
+        var renderer = new THREE.WebGLRenderer();
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);        
+        document.body.appendChild(renderer.domElement);
 		
 		scene.add(new THREE.AmbientLight(0x333333));
 		
+		function updateControls(){
+            controls.update();         
+		}
+
+		var controls = new THREE.OrbitControls( camera, renderer.domElement );
+        controls.addEventListener( 'change', updateControls );
+		controls.enableZoom = false;
 		//Lighting
 		var light = new THREE.DirectionalLight(0xffffff, 1);
 		light.position.set(5, 3, 5);
 		scene.add(light);
 		
-		var geometry = new THREE.SphereGeometry(0.5, 32, 32);
-		var material = new THREE.MeshPhongMaterial();
-		var earthMesh = new THREE.Mesh(geometry, material);
-		scene.add(earthMesh);		
-	
-		
+        var geometry = new THREE.SphereGeometry(0.5, 32, 32);
+        var material = new THREE.MeshPhongMaterial();
+        var earthMesh = new THREE.Mesh(geometry, material); 
+		scene.add(earthMesh);
+			
 		material.map = THREE.ImageUtils.loadTexture("images/earthmap1k.jpg");
 		material.bumpMap = THREE.ImageUtils.loadTexture("images/earthbump1k.jpg");
 		material.bumpScale = 0.05;
@@ -68,20 +58,21 @@ body {
 		material.side = THREE.BackSide;
 		var mesh = new THREE.Mesh(geometry, material);
 		scene.add(mesh);
-
-		camera.position.z = 1.5;
-
-		var render = function () {
-			//Rotation animation
-			earthMesh.rotation.y += 0.0005;
+		/*
+		onRenderFcts.push(function(delta, now){
+			earthMesh.rotation.y  += 1/32 * delta
+		})
+		onRenderFcts.push(function(delta, now){
+			cloudMesh.rotation.y  += 1/16 * delta
+		})*/
+        camera.position.z = 1.5;
+        function render() {
+            earthMesh.rotation.y += 0.0005;
   			cloudMesh.rotation.y += 0.00025;
-
 			requestAnimationFrame(render);
-
-			renderer.render(scene, camera);
-		};
-
-		render();
-	   
-</script>
+            renderer.render(scene, camera);
+        }
+        render();
+    </script>
+</body>
 </html>
